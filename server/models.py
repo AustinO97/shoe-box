@@ -18,6 +18,7 @@ class Shoe(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     model = db.Column(db.String(80), nullable=False)
     brand = db.Column(db.String(80), nullable=False)
+    image_url = db.Column(db.String)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship('User', back_populates='shoes')
     reviews = db.relationship('Review', back_populates='shoe', cascade='all, delete-orphan')

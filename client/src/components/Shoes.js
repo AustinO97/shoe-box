@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ShoeCard from './ShoeCard';
 
 function Shoes() {
   const [shoes, setShoes] = useState([]);
@@ -8,8 +9,8 @@ function Shoes() {
     fetch('/shoes')
       .then(res => res.json())
       .then(
-        (result) => {
-          setShoes(result);
+        (shoe) => {
+          setShoes(shoe);
         },
         (error) => {
           setError(error);
@@ -21,14 +22,18 @@ function Shoes() {
     return <div>Error: {error.message}</div>;
   }
 
+  const startingShoes = shoes.map((shoe) => {
+    return <ShoeCard key={shoe.id} shoe={shoe} />
+  })
+
   return (
-    <div>
-      <h2>Shoes</h2>
-      <ul>
-        {shoes.map(shoe => (
-          <li key={shoe.id}>{shoe.model} - {shoe.brand}</li>
-        ))}
-      </ul>
+    <div className='container'>
+      <h1 className='header'>
+        Shoe Box
+      </h1>
+      <div className='shoe-container'>
+        {startingShoes}
+      </div>
     </div>
   );
 }
