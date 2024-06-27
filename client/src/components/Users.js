@@ -8,8 +8,8 @@ function Users() {
     fetch('/users')
       .then(res => res.json())
       .then(
-        (result) => {
-          setUsers(result);
+        (user) => {
+          setUsers(user);
         },
         (error) => {
           setError(error);

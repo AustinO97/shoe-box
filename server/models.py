@@ -11,7 +11,7 @@ class User(db.Model, SerializerMixin):
     shoes = db.relationship('Shoe', back_populates='user', cascade='all, delete-orphan')
     reviews = db.relationship('Review', back_populates='user', cascade='all, delete-orphan')
 
-    serialize_rules = ('-shoes.user', '-reviews.user')
+    serialize_rules = ('-reviews.user',)
 
 class Shoe(db.Model, SerializerMixin):
     __tablename__ = 'shoes'
