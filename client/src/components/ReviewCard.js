@@ -6,7 +6,12 @@ const ReviewCard = ({ review }) => {
 
     return (
         <div className="review-card">
-            <h4>Review by {user.username}</h4>
+            <h3>Review by {user.username}</h3>
+            <h4>{review.shoe.brand} {review.shoe.model}</h4>
+            <img 
+            src={review.shoe.image_url}
+            alt={review.shoe.brand}
+            className="shoe-image" />
             <p>{content}</p>
             <div className="rating">Rating: {rating}/5</div>
         </div>
