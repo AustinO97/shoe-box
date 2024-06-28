@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 # Standard library imports
+from dotenv import load_dotenv
+load_dotenv()
 
 # Remote library imports
 from flask import request
