@@ -20,7 +20,7 @@ if __name__ == '__main__':
 
         # Seed Users
         u1 = User(username='Jim')
-        u2 = User(username='sara')
+        u2 = User(username='Sara')
         u3 = User(username='Will')
 
         db.session.add(u1)
