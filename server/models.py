@@ -1,5 +1,6 @@
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import validates
 
 from config import db
 
@@ -11,7 +12,13 @@ class User(db.Model, SerializerMixin):
     shoes = db.relationship('Shoe', back_populates='user', cascade='all, delete-orphan')
     reviews = db.relationship('Review', back_populates='user', cascade='all, delete-orphan')
 
-    serialize_rules = ('-reviews.user',)
+    serialize_rules = ('-shoes.user', '-reviews.user', '-reviews.shoe.user')
+
+    @validates('username')
+    def validates_username(self, key, username):
+        if not username:
+            raise ValueError('Please enter a username')
+        return username
 
 class Shoe(db.Model, SerializerMixin):
     __tablename__ = 'shoes'
