@@ -21,6 +21,7 @@ def index():
     
 api.add_resource(Users, '/users')
 api.add_resource(Shoes, '/shoes')
+api.add_resource(ShoesByID, '/shoes/<int:id>')
 api.add_resource(Reviews, '/reviews')
 
 
