@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 
 const ShoeDetail = () => {
   const { id } = useParams();
+  const history = useHistory();
   const [shoe, setShoe] = useState(null);
-  const [shoes, setShoes] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -20,7 +20,7 @@ const ShoeDetail = () => {
       );
   }, [id]);
 
-  const handleDelete = (id) => {
+  const handleDelete = () => {
     fetch(`/shoes/${id}`, {
       method: 'DELETE',
       headers: {
@@ -28,7 +28,7 @@ const ShoeDetail = () => {
       },
     })
     .then(() => {
-      setShoes(shoes.filter(shoe => shoe.id !== id));
+      history.push('/');
     })
     .catch(error => {
       setError(error);
