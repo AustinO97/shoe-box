@@ -3,9 +3,10 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import ShoeCard from './ShoeCard';
 
+
 function Shoes() {
-  const [shoes, setShoes] = useState([]);
-  const [error, setError] = useState(null);
+  const [shoes, setShoes] = useState([])
+  const [error, setError] = useState(null)
 
 
   useEffect(() => {
@@ -19,21 +20,19 @@ function Shoes() {
           setError(error);
         }
       )
-  }, []);
+  }, [])
 
   const validationSchema = yup.object({
     brand: yup.string().required('Brand is required'),
     model: yup.string().required('Model is required'),
-    image_url: yup.string().url('Invalid URL').required('Image URL is required'),
-    user_id: yup.number().required('User ID is required')
+    image_url: yup.string().url('Invalid URL').required('Image URL is required')
   });
 
   const formik = useFormik({
     initialValues: {
       brand: '',
       model: '',
-      image_url: '',
-      user_id: ''
+      image_url: ''
     },
     validationSchema: validationSchema,
     onSubmit: (values, { resetForm }) => {
@@ -47,30 +46,29 @@ function Shoes() {
       .then(res => res.json())
       .then(
         (newShoe) => {
-          setShoes([...shoes, newShoe]);
-          resetForm();
+          setShoes([...shoes, newShoe])
+          resetForm()
         },
         (error) => {
-          setError(error);
+          setError(error)
         }
-      );
+      )
     }
-  });
-
-
+  })
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div>Error: {error.message}</div>
   }
 
   const startingShoes = shoes.map((shoe) => {
-    return <ShoeCard key={shoe.id} shoe={shoe} />;
-  });
+    return <ShoeCard key={shoe.id} shoe={shoe} />
+  })
 
   return (
-    <div className='container'>
+    <div className='form-container'>
       <h1 className='header'>Shoe Box</h1>
-      <form onSubmit={formik.handleSubmit}>
+      <form id='shoe-form' onSubmit={formik.handleSubmit}>
+      <h3>Add New Shoe</h3>
       <div>
           <label htmlFor="brand">Brand</label>
           <input
@@ -111,20 +109,6 @@ function Shoes() {
           />
           {formik.touched.image_url && formik.errors.image_url ? (
             <div>{formik.errors.image_url}</div>
-          ) : null}
-        </div>
-        <div>
-          <label htmlFor="user_id">User ID</label>
-          <input
-            id="user_id"
-            name="user_id"
-            type="number"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.user_id}
-          />
-          {formik.touched.user_id && formik.errors.user_id ? (
-            <div>{formik.errors.user_id}</div>
           ) : null}
         </div>
         <button type="submit">Add Shoe</button>
