@@ -15,8 +15,7 @@ class Shoes(Resource):
             new_shoe = Shoe(
                 model=data['model'],
                 brand=data['brand'],
-                image_url=data['image_url'],
-                user_id=data['user_id']
+                image_url=data['image_url']
             )
             db.session.add(new_shoe)
             db.session.commit()
