@@ -31,6 +31,16 @@ class ShoesByID(Resource):
     def get(self, id):
         shoe = Shoe.query.filter(Shoe.id == id).first()
         return shoe.to_dict(), 200
+    
+    def patch(self, id):
+        data = request.get_json()
+        shoe = Shoe.query.filter(Shoe.id == id).first()
+        
+        for attr in data:
+            setattr(shoe, attr, data[attr])
+        db.session.add(shoe)
+        db.session.commit()
+        return shoe.to_dict(), 202
 
     def delete(self, id):
         shoe = Shoe.query.filter(Shoe.id == id).first()
