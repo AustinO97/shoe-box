@@ -70,11 +70,11 @@ function Shoes() {
       <form id='shoe-form' onSubmit={formik.handleSubmit}>
       <h3>Add New Shoe</h3>
       <div>
-          <label htmlFor="brand">Brand</label>
+          <label htmlFor='brand'>Brand</label>
           <input
-            id="brand"
-            name="brand"
-            type="text"
+            id='brand'
+            name='brand'
+            type='text'
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.brand}
@@ -84,11 +84,11 @@ function Shoes() {
           ) : null}
         </div>
         <div>
-          <label htmlFor="model">Model</label>
+          <label htmlFor='model'>Model</label>
           <input
-            id="model"
-            name="model"
-            type="text"
+            id='model'
+            name='model'
+            type='text'
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.model}
@@ -98,11 +98,11 @@ function Shoes() {
           ) : null}
         </div>
         <div>
-          <label htmlFor="image_url">Image URL</label>
+          <label htmlFor='image_url'>Image URL</label>
           <input
-            id="image_url"
-            name="image_url"
-            type="text"
+            id='image_url'
+            name='image_url'
+            type='text'
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             value={formik.values.image_url}
@@ -111,7 +111,7 @@ function Shoes() {
             <div>{formik.errors.image_url}</div>
           ) : null}
         </div>
-        <button type="submit">Add Shoe</button>
+        <button type='submit'>Add Shoe</button>
       </form>
       <div className='shoe-container'>
         {startingShoes}

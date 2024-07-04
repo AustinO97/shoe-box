@@ -1,21 +1,11 @@
 #!/usr/bin/env python3
-
-# Standard library imports
-from random import randint, choice as rc
-from datetime import date
-
-# Remote library imports
-
-# Standard library imports
-from datetime import date
-
 # Local imports
 from app import app
 from models import db, Shoe, User, Review
 
 if __name__ == '__main__':
     with app.app_context():
-        print("Starting seed...")
+        print('Starting seed...')
 
         # Clear existing data
         db.session.query(Review).delete()
@@ -45,10 +35,10 @@ if __name__ == '__main__':
         db.session.commit()
 
         # Assign Shoes to Users and Seed Reviews
-        r1 = Review(content='Great shoe for long distance but the laces are not my favorite', rating=4, purchase_date=date.today(), shoe=s1, user=u1)
-        r2 = Review(content='Love them!', rating=5, purchase_date=date.today(), shoe=s2, user=u2)
-        r3 = Review(content="Expensive but worth the money, it's like running on water", rating=5, purchase_date=date.today(), shoe=s3, user=u1)
-        r4 = Review(content='Great for everyday training but not for long runs, got bad blisters', rating=4, purchase_date=date.today(), shoe=s4, user=u3)
+        r1 = Review(content='Great shoe for long distance but the laces are not my favorite', rating=4, shoe=s1, user=u1)
+        r2 = Review(content='Love them!', rating=5, shoe=s2, user=u2)
+        r3 = Review(content="Expensive but worth the money, it's like running on water", rating=5, shoe=s3, user=u1)
+        r4 = Review(content='Great for everyday training but not for long runs, got bad blisters', rating=4, shoe=s4, user=u3)
 
         db.session.add(r1)
         db.session.add(r2)
@@ -56,4 +46,4 @@ if __name__ == '__main__':
         db.session.add(r4)
         db.session.commit()
 
-        print("Seed completed successfully.")
+        print('Seed completed successfully.')

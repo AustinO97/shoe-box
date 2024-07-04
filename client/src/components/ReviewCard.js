@@ -2,7 +2,7 @@ import React from 'react';
 
 
 const ReviewCard = ({ review }) => {
-    const { content, rating, user } = review;
+    const { content, rating, user } = review
 
     return (
         <div className="review-card">

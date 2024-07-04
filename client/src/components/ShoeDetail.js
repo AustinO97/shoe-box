@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 
 const ShoeDetail = () => {
-  const { id } = useParams();
-  const history = useHistory();
-  const [shoe, setShoe] = useState(null);
-  const [error, setError] = useState(null);
+  const { id } = useParams()
+  const history = useHistory()
+  const [shoe, setShoe] = useState(null)
+  const [error, setError] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
-  const [formData, setFormData] = useState({
-    brand: '',
-    model: '',
-    image_url: ''
-  });
 
   useEffect(() => {
     fetch(`/shoes/${id}`)
@@ -19,7 +16,7 @@ const ShoeDetail = () => {
       .then(
         (shoe) => {
           setShoe(shoe)
-          setFormData({
+          formik.setValues({
             brand: shoe.brand,
             model: shoe.model,
             image_url: shoe.image_url,
@@ -30,6 +27,24 @@ const ShoeDetail = () => {
         }
       )
   }, [id])
+
+  const validationSchema = yup.object({
+    brand: yup.string().required('Brand is required'),
+    model: yup.string().required('Model is required'),
+    image_url: yup.string().required('Image URL is required').url('Must be a valid URL'),
+  })
+
+  const formik = useFormik({
+    initialValues: {
+      brand: '',
+      model: '',
+      image_url: '',
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      handleFormSubmit(values)
+    },
+  })
 
   const handleDelete = () => {
     fetch(`/shoes/${id}`, {
@@ -52,30 +67,16 @@ const ShoeDetail = () => {
 
   const handleCancelEdit = () => {
     setIsEditing(false)
-    setFormData({
-      brand: shoe.brand,
-      model: shoe.model,
-      image_url: shoe.image_url,
-      user_id: shoe.user_id,
-    })
+    formik.resetForm()
   }
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData({
-      ...formData,
-      [name]: value,
-    })
-  }
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault()
+  const handleFormSubmit = (values) => {
     fetch(`/shoes/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(values),
     })
       .then(res => res.json())
       .then((updatedShoe) => {
@@ -95,57 +96,69 @@ const ShoeDetail = () => {
     return <div>Loading...</div>
   }
 
-  if (isEditing) {
-    return (
-      <div className='shoe-detail'>
-        <h2>Edit Shoe</h2>
-        <form id='shoe-form' onSubmit={handleFormSubmit}>
-          <div>
-            <label htmlFor="brand">Brand</label>
-            <input
-              id="brand"
-              name="brand"
-              type="text"
-              onChange={handleInputChange}
-              value={formData.brand}
-            />
-          </div>
-          <div>
-            <label htmlFor="model">Model</label>
-            <input
-              id="model"
-              name="model"
-              type="text"
-              onChange={handleInputChange}
-              value={formData.model}
-            />
-          </div>
-          <div>
-            <label htmlFor="image_url">Image URL</label>
-            <input
-              id="image_url"
-              name="image_url"
-              type="text"
-              onChange={handleInputChange}
-              value={formData.image_url}
-            />
-          </div>
-          <button type="submit">Save Changes</button>
-          <br/>
-          <button type="button" onClick={handleCancelEdit}>Cancel</button>
-        </form>
-      </div>
-    )
-  }
-
   return (
     <div className='shoe-detail'>
-      <h2>{shoe.model}</h2>
-      <p>{shoe.brand}</p>
-      <img src={shoe.image_url} alt={shoe.model} />
-      <button onClick={handleDelete}>Remove Shoe</button>
-      <br/>
-      <button onClick={handleEditToggle}>Edit Shoe</button>
+      {isEditing ? (
+        <div>
+          <h2>Edit Shoe</h2>
+          <form id='shoe-form' onSubmit={formik.handleSubmit}>
+            <div>
+              <label htmlFor="brand">Brand</label>
+              <input
+                id='brand'
+                name='brand'
+                type='text'
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.brand}
+              />
+              {formik.touched.brand && formik.errors.brand ? (
+                <div>{formik.errors.brand}</div>
+              ) : null}
+            </div>
+            <div>
+              <label htmlFor='model'>Model</label>
+              <input
+                id='model'
+                name='model'
+                type='text'
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.model}
+              />
+              {formik.touched.model && formik.errors.model ? (
+                <div>{formik.errors.model}</div>
+              ) : null}
+            </div>
+            <div>
+              <label htmlFor='image_url'>Image URL</label>
+              <input
+                id='image_url'
+                name='image_url'
+                type='text'
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.image_url}
+              />
+              {formik.touched.image_url && formik.errors.image_url ? (
+                <div>{formik.errors.image_url}</div>
+              ) : null}
+            </div>
+            <button type='submit'>Save Changes</button>
+            <br />
+            <button type='button' onClick={handleCancelEdit}>Cancel</button>
+          </form>
+        </div>
+      ) : (
+        <div>
+          <h2>{shoe.model}</h2>
+          <p>{shoe.brand}</p>
+          <img src={shoe.image_url} alt={shoe.model} />
+          <button className='delete-button' onClick={handleDelete}>Remove Shoe</button>
+          <br />
+          <button className='edit-button' onClick={handleEditToggle}>Edit Shoe</button>
+        </div>
+      )}
     </div>
   )
 }

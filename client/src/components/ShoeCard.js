@@ -13,7 +13,7 @@ const ShoeCard = ({ shoe }) => {
         <img 
         src={image_url}
         alt={brand}
-        className="shoe-image" />
+        className='shoe-image' />
         <br/>
       </Link>
     </div>

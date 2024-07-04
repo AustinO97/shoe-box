@@ -45,7 +45,6 @@ class Review(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(200), nullable=False)
     rating = db.Column(db.Integer, nullable=False)
-    purchase_date = db.Column(db.Date, nullable=True)
     shoe_id = db.Column(db.Integer, db.ForeignKey('shoes.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     shoe = db.relationship('Shoe', back_populates='reviews')
