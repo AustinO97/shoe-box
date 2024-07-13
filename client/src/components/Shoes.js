@@ -3,30 +3,22 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import ShoeCard from './ShoeCard';
 
-
-function Shoes() {
+const Shoes = () => {
   const [shoes, setShoes] = useState([])
   const [error, setError] = useState(null)
-
 
   useEffect(() => {
     fetch('/shoes')
       .then(res => res.json())
-      .then(
-        (shoe) => {
-          setShoes(shoe);
-        },
-        (error) => {
-          setError(error);
-        }
-      )
+      .then(shoe => setShoes(shoe))
+      .catch(error => setError(error))
   }, [])
 
   const validationSchema = yup.object({
     brand: yup.string().required('Brand is required'),
     model: yup.string().required('Model is required'),
     image_url: yup.string().url('Invalid URL').required('Image URL is required')
-  });
+  })
 
   const formik = useFormik({
     initialValues: {
@@ -39,7 +31,7 @@ function Shoes() {
       fetch('/shoes', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(values),
       })
@@ -48,11 +40,10 @@ function Shoes() {
         (newShoe) => {
           setShoes([...shoes, newShoe])
           resetForm()
-        },
-        (error) => {
+        })
+        .catch((error) => {
           setError(error)
-        }
-      )
+      })
     }
   })
 
@@ -117,7 +108,7 @@ function Shoes() {
         {startingShoes}
       </div>
     </div>
-  );
+  )
 }
 
-export default Shoes;
+export default Shoes
