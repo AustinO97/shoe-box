@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import ReviewCard from './ReviewCard';
 
-function Reviews() {
+const Reviews = () => {
   const [reviews, setReviews] = useState([])
   const [shoes, setShoes] = useState([])
   const [users, setUsers] = useState([])
@@ -12,36 +12,18 @@ function Reviews() {
   useEffect(() => {
     fetch('/reviews')
       .then(res => res.json())
-      .then(
-        (result) => {
-          setReviews(result)
-        },
-        (error) => {
-          setError(error)
-        }
-      )
+      .then(review => setReviews(review))
+      .catch(error => setError(error))
 
     fetch('/shoes')
       .then(res => res.json())
-      .then(
-        (result) => {
-          setShoes(result)
-        },
-        (error) => {
-          setError(error)
-        }
-      )
+      .then(shoe => setShoes(shoe))
+      .catch(error => setError(error))
 
     fetch('/users')
       .then(res => res.json())
-      .then(
-        (result) => {
-          setUsers(result)
-        },
-        (error) => {
-          setError(error)
-        }
-      )
+      .then(user => setUsers(user))
+      .catch(error => setError(error))
   }, [])
 
   const validationSchema = yup.object({
@@ -63,20 +45,18 @@ function Reviews() {
       fetch('/reviews', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(values),
       })
       .then(res => res.json())
-      .then(
-        (newReview) => {
+      .then((newReview) => {
           setReviews([...reviews, newReview])
           resetForm()
-        },
-        (error) => {
+        })
+        .catch((error) => {
           setError(error)
-        }
-      )
+      })
     }
   })
 
