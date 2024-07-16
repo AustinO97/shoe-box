@@ -27,8 +27,10 @@ class Shoe(db.Model, SerializerMixin):
     image_url = db.Column(db.String)
     reviews = db.relationship('Review', back_populates='shoe', cascade='all, delete-orphan')
     users = db.relationship('User', secondary='reviews', back_populates='shoes')
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
+    category = db.relationship('Category', back_populates='shoes')
 
-    serialize_rules = ('-reviews.shoe', '-users')
+    serialize_rules = ('-reviews.shoe', '-users', '-category.shoes')
 
 class Review(db.Model, SerializerMixin):
     __tablename__ = 'reviews'
@@ -42,3 +44,12 @@ class Review(db.Model, SerializerMixin):
     user = db.relationship('User', back_populates='reviews')
 
     serialize_rules = ('-user.reviews', '-shoe.reviews')
+
+class Category(db.Model, SerializerMixin):
+    __tablename__ = 'categories'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(10), unique=True, nullable=False)
+    shoes = db.relationship('Shoe', back_populates='category')
+
+    serialize_rules = ('-shoes.category', )
