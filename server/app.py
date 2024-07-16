@@ -24,6 +24,8 @@ api.add_resource(Users, '/users')
 api.add_resource(Shoes, '/shoes')
 api.add_resource(ShoesByID, '/shoes/<int:id>')
 api.add_resource(Reviews, '/reviews')
+api.add_resource(Categories, '/categories')
+api.add_resource(CategoryByID, '/categories/<int:id>')
 
 
 if __name__ == '__main__':
