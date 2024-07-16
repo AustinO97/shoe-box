@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Local imports
 from app import app
-from models import db, Shoe, User, Review
+from models import db, Shoe, User, Review, Category
 
 if __name__ == '__main__':
     with app.app_context():
@@ -11,6 +11,15 @@ if __name__ == '__main__':
         db.session.query(Review).delete()
         db.session.query(Shoe).delete()
         db.session.query(User).delete()
+        db.session.query(Category).delete()
+
+        # Seed Categories
+        road_running = Category(name='Road Running')
+        trail_running = Category(name='Trail Running')
+
+        db.session.add(road_running)
+        db.session.add(trail_running)
+        db.session.commit()
 
         # Seed Users
         u1 = User(username='Jim')
@@ -23,10 +32,10 @@ if __name__ == '__main__':
         db.session.commit()
 
         # Seed Shoes for each User
-        s1 = Shoe(model='Cloudmonster', brand='on', image_url='https://www.fit2run.com/on/demandware.static/-/Sites-fit2run-master-catalog/default/dw0a7c5ea5/large/On/Cloudmonster/undyed-white-white/M61.98288_undyed-white-white_1.png')
-        s2 = Shoe(model='Clifton 9', brand='hoka', image_url='https://runpacers.com/cdn/shop/files/Womens-HOKA-ONE-ONE-Clifton-9_df02e23a-1de7-42a3-892e-f0c999eae45d.jpg?v=1704983903')
-        s3 = Shoe(model='GS:PGH', brand='Speedland', image_url='https://s3.us-east-1.amazonaws.com/images.gearjunkie.com/uploads/2023/06/GS-PGH.jpg')
-        s4 = Shoe(model='Endorphin Speed 3', brand='Saucony', image_url='https://www.runningxpert.com/media/catalog/product/cache/7e8abaf7537934dd81b80ec8cec77ddf/s/a/saucony_endorphin_speed_3_mens_whiteblck.jpg')
+        s1 = Shoe(model='Cloudmonster', brand='On', image_url='https://www.fit2run.com/on/demandware.static/-/Sites-fit2run-master-catalog/default/dw0a7c5ea5/large/On/Cloudmonster/undyed-white-white/M61.98288_undyed-white-white_1.png', category=road_running)
+        s2 = Shoe(model='Clifton 9', brand='Hoka', image_url='https://runpacers.com/cdn/shop/files/Womens-HOKA-ONE-ONE-Clifton-9_df02e23a-1de7-42a3-892e-f0c999eae45d.jpg?v=1704983903', category=road_running)
+        s3 = Shoe(model='GS:PGH', brand='Speedland', image_url='https://s3.us-east-1.amazonaws.com/images.gearjunkie.com/uploads/2023/06/GS-PGH.jpg', category=trail_running)
+        s4 = Shoe(model='Endorphin Speed 3', brand='Saucony', image_url='https://www.runningxpert.com/media/catalog/product/cache/7e8abaf7537934dd81b80ec8cec77ddf/s/a/saucony_endorphin_speed_3_mens_whiteblck.jpg', category=road_running)
 
         db.session.add(s1)
         db.session.add(s2)
