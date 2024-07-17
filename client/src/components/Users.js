@@ -45,14 +45,11 @@ const Users = () => {
         body: JSON.stringify(values)
       })
       .then(res => res.json())
-      .then(
-        (newUser) => {
+      .then(newUser => {
           setUsers([...users, newUser])
           resetForm()
         })
-        .catch((error) => {
-          setError(error)
-      })
+        .catch(error => setError(error))
     }
   })
 
@@ -66,8 +63,8 @@ const Users = () => {
 
   return (
     <div className='form-container'>
-      <h1 className='header'>Users</h1>
-      <form id='user-form' onSubmit={formik.handleSubmit}>
+      <h1 className='header'>Shoe Box</h1>
+      <form id='shoe-form' onSubmit={formik.handleSubmit}>
         <h3>Add New User</h3>
         <div>
         <label htmlFor='username'>Username</label>

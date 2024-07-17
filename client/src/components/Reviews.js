@@ -54,9 +54,7 @@ const Reviews = () => {
           setReviews([...reviews, newReview])
           resetForm()
         })
-        .catch((error) => {
-          setError(error)
-      })
+        .catch(error => setError(error))
     }
   })
 
@@ -70,7 +68,7 @@ const Reviews = () => {
 
   return (
     <div className='form-container'>
-      <h1 className='header'>Shoe Reviews</h1>
+      <h1 className='header'>Shoe Box</h1>
       <form id='review-form' onSubmit={formik.handleSubmit}>
         <h3>Add New Review</h3>
         <div>
