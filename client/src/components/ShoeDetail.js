@@ -7,30 +7,34 @@ const ShoeDetail = () => {
   const { id } = useParams()
   const history = useHistory()
   const [shoe, setShoe] = useState(null)
+  const [categories, setCategories] = useState([])
   const [error, setError] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
     fetch(`/shoes/${id}`)
       .then(res => res.json())
-      .then(
-        (shoe) => {
+      .then((shoe) => {
           setShoe(shoe)
           formik.setValues({
             brand: shoe.brand,
             model: shoe.model,
+            category: shoe.category ? shoe.category.id : '',
             image_url: shoe.image_url,
           })
-        },
-        (error) => {
-          setError(error)
-        }
-      )
-  }, [id])
+        })
+        .catch(error => setError(error))
+
+      fetch('/categories')
+      .then(res => res.json())
+      .then(category => setCategories(category))
+      .catch(error => setError(error))
+  }, [])
 
   const validationSchema = yup.object({
     brand: yup.string().required('Brand is required'),
     model: yup.string().required('Model is required'),
+    category: yup.string().required('Category is required'),
     image_url: yup.string().required('Image URL is required').url('Must be a valid URL'),
   })
 
@@ -38,23 +42,43 @@ const ShoeDetail = () => {
     initialValues: {
       brand: '',
       model: '',
+      category: '',
       image_url: '',
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      handleFormSubmit(values)
-    },
-  })
+      fetch(`/shoes/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          brand: values.brand,
+          model: values.model,
+          category_id: values.category,
+          image_url: values.image_url,
+        }),
+      })
+      .then(res => res.json())
+        .then((updatedShoe) => {
+          setShoe(updatedShoe)
+          setIsEditing(false)
+        })
+        .catch(error => {
+          setError(error)
+        })
+      }
+    })
 
   const handleDelete = () => {
     fetch(`/shoes/${id}`, {
       method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
     })
-      .then(() => {
-        history.push('/')
+    .then(() => {
+       history.push('/')
       })
       .catch(error => {
         setError(error)
@@ -68,24 +92,6 @@ const ShoeDetail = () => {
   const handleCancelEdit = () => {
     setIsEditing(false)
     formik.resetForm()
-  }
-
-  const handleFormSubmit = (values) => {
-    fetch(`/shoes/${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(values),
-    })
-      .then(res => res.json())
-      .then((updatedShoe) => {
-        setShoe(updatedShoe)
-        setIsEditing(false)
-      })
-      .catch(error => {
-        setError(error)
-      })
   }
 
   if (error) {
@@ -131,6 +137,26 @@ const ShoeDetail = () => {
               ) : null}
             </div>
             <div>
+              <label htmlFor='category'>Category</label>
+              <select
+                id='category'
+                name='category'
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.category}
+              >
+                <option value='' label='Select category' />
+                {categories.map(category => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+              {formik.touched.category && formik.errors.category ? (
+                <div>{formik.errors.category}</div>
+              ) : null}
+            </div>
+            <div>
               <label htmlFor='image_url'>Image URL</label>
               <input
                 id='image_url'
@@ -153,6 +179,7 @@ const ShoeDetail = () => {
         <div>
           <h2>{shoe.model}</h2>
           <p>{shoe.brand}</p>
+          <p>{shoe.category ? shoe.category.name : 'No category'}</p>
           <img src={shoe.image_url} alt={shoe.model} />
           <button className='delete-button' onClick={handleDelete}>Remove Shoe</button>
           <br />
