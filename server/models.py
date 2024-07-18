@@ -8,7 +8,7 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     reviews = db.relationship('Review', back_populates='user', cascade='all, delete-orphan')
-    shoes = db.relationship('Shoe', secondary='reviews', back_populates='users')
+    shoes = db.relationship('Shoe', secondary='reviews', back_populates='users', overlaps='reviews')
 
     serialize_rules = ('-reviews.user', '-reviews.shoe.users', '-shoes')
 
@@ -25,8 +25,8 @@ class Shoe(db.Model, SerializerMixin):
     model = db.Column(db.String(80), nullable=False)
     brand = db.Column(db.String(80), nullable=False)
     image_url = db.Column(db.String)
-    reviews = db.relationship('Review', back_populates='shoe', cascade='all, delete-orphan')
-    users = db.relationship('User', secondary='reviews', back_populates='shoes')
+    reviews = db.relationship('Review', back_populates='shoe', cascade='all, delete-orphan', overlaps='users')
+    users = db.relationship('User', secondary='reviews', back_populates='shoes', overlaps='reviews')
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
     category = db.relationship('Category', back_populates='shoes')
 
@@ -40,8 +40,8 @@ class Review(db.Model, SerializerMixin):
     rating = db.Column(db.Integer, nullable=False)
     shoe_id = db.Column(db.Integer, db.ForeignKey('shoes.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    shoe = db.relationship('Shoe', back_populates='reviews')
-    user = db.relationship('User', back_populates='reviews')
+    shoe = db.relationship('Shoe', back_populates='reviews', overlaps='users,shoes')
+    user = db.relationship('User', back_populates='reviews', overlaps='shoes,users')
 
     serialize_rules = ('-user.reviews', '-shoe.reviews')
 
