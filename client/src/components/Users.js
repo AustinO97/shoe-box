@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import UserCard from './UserCard';
+import { UserContext } from './UserContext';
 
 const Users = () => {
-  const [users, setUsers] = useState([])
-  const [reviews, setReviews] = useState([])
-  const [shoes, setShoes] = useState([])
-  const [error, setError] = useState(null)
+  const { users, setUsers, error, setError } = useContext(UserContext)
+
 
   useEffect(() => {
     fetch('/users')
@@ -15,16 +14,7 @@ const Users = () => {
       .then(user => setUsers(user))
       .catch(error => setError(error))
   
-    fetch('/reviews')
-      .then(res => res.json())
-      .then(review => setReviews(review))
-      .catch(error => setError(error))
-  
-    fetch('/shoes')
-      .then(res => res.json())
-      .then(shoe => setShoes(shoe))
-      .catch(error => setError(error))
-  }, [])
+  }, [setError, setUsers])
   
 
   const validationSchema = yup.object({
