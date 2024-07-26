@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
+import { ShoeContext } from './ShoeContext';
+import { CategoryContext } from './CategoryContext';
 
 
 const ShoeForm = () => {
-  const [shoes, setShoes] = useState([])
-  const [categories, setCategories] = useState([])
-  const [error, setError] = useState(null)
+  const { shoes, setShoes, setError } = useContext(ShoeContext)
+  const { categories, setCategories } = useContext(CategoryContext)
   const history = useHistory()
 
   useEffect(() => {
@@ -15,7 +16,7 @@ const ShoeForm = () => {
     .then(res => res.json())
     .then(category => setCategories(category))
     .catch(error => setError(error))
-  }, [])
+  }, [setError, setShoes, setCategories])
 
   const validationSchema = yup.object({
     brand: yup.string().required('Brand is required'),
