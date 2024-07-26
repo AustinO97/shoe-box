@@ -1,33 +1,30 @@
-import React, { useEffect, useState } from 'react';
+// src/components/ShoeDetail.js
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { CategoryContext } from './CategoryContext';
+
 
 const ShoeDetail = () => {
   const { id } = useParams()
   const history = useHistory()
   const [shoe, setShoe] = useState(null)
-  const [categories, setCategories] = useState([])
-  const [error, setError] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
+  const { categories, setCategories, error, setError } = useContext(CategoryContext)
 
   useEffect(() => {
     fetch(`/shoes/${id}`)
       .then(res => res.json())
       .then((shoe) => {
-          setShoe(shoe)
-          formik.setValues({
-            brand: shoe.brand,
-            model: shoe.model,
-            category: shoe.category ? shoe.category.id : '',
-            image_url: shoe.image_url,
-          })
+        setShoe(shoe)
+        formik.setValues({
+          brand: shoe.brand,
+          model: shoe.model,
+          category: shoe.category ? shoe.category.id : '',
+          image_url: shoe.image_url,
         })
-        .catch(error => setError(error))
-
-      fetch('/categories')
-      .then(res => res.json())
-      .then(category => setCategories(category))
+      })
       .catch(error => setError(error))
   }, [])
 
@@ -67,8 +64,8 @@ const ShoeDetail = () => {
         .catch(error => {
           setError(error)
         })
-      }
-    })
+    }
+  })
 
   const handleDelete = () => {
     fetch(`/shoes/${id}`, {
