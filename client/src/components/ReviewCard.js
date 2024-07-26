@@ -1,22 +1,18 @@
 import React from 'react';
 
-
 const ReviewCard = ({ review }) => {
-	const { content, rating, user } = review
+  const { content, rating, shoe, user } = review;
 
-	return (
-		<div className="review-card">
-			<h3>Review by {user.username}</h3>
-			<h4>{review.shoe.brand} {review.shoe.model}</h4>
-			<img
-        	src={review.shoe.image_url}
-        	alt={review.shoe.brand}
-        	className="shoe-image" />
-			<p>Review: {content}</p>
-			<div className="rating">Rating: {rating}/5</div>
+  return (
+    <div className="review-card">
+      <h3>Review by {user.username}</h3>
+      <h4>{shoe.brand} {shoe.model}</h4>
+      <img src={shoe.image_url} alt={shoe.brand} className="shoe-image" />
+      <p>{content}</p>
+      <div className="rating">Rating: {rating}/5</div>
 			<p>Category: {review.shoe.category.name}</p>
-		</div>
-	)
-}
+    </div>
+  );
+};
 
-export default ReviewCard
+export default ReviewCard;
