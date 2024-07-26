@@ -1,30 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import ReviewCard from './ReviewCard';
+import { ReviewContext } from './ReviewContext';
+import { ShoeContext } from './ShoeContext';
+import { UserContext } from './UserContext';
 
 const Reviews = () => {
-  const [reviews, setReviews] = useState([])
-  const [shoes, setShoes] = useState([])
-  const [users, setUsers] = useState([])
-  const [error, setError] = useState(null)
+  const { reviews, setReviews, error, setError } = useContext(ReviewContext)
+  const { shoes } = useContext(ShoeContext)
+  const { users } = useContext(UserContext)
 
   useEffect(() => {
     fetch('/reviews')
       .then(res => res.json())
       .then(review => setReviews(review))
       .catch(error => setError(error))
-
-    fetch('/shoes')
-      .then(res => res.json())
-      .then(shoe => setShoes(shoe))
-      .catch(error => setError(error))
-
-    fetch('/users')
-      .then(res => res.json())
-      .then(user => setUsers(user))
-      .catch(error => setError(error))
-  }, [])
+  }, [setReviews, setError])
 
   const validationSchema = yup.object({
     content: yup.string().required('Content is required'),
