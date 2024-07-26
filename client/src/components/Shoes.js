@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import ShoeCard from './ShoeCard';
+import { ShoeContext } from './ShoeContext';
 
 const Shoes = () => {
-  const [shoes, setShoes] = useState([])
-  const [error, setError] = useState(null)
+  const { shoes, setShoes, error, setError } = useContext(ShoeContext)
 
   useEffect(() => {
     fetch('/shoes')
       .then(res => res.json())
       .then(shoe => setShoes(shoe))
       .catch(error => setError(error))
-  }, [])
-
-
+  }, [setError, setShoes])
 
   if (error) {
     return <div>Error: {error.message}</div>
