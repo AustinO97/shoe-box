@@ -1,22 +1,27 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import ShoeCard from './ShoeCard';
-import { ShoeContext } from './ShoeContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchShoes, selectShoes } from '../redux/shoeSlice';
 
 const Shoes = () => {
-  const { shoes, setShoes, error, setError } = useContext(ShoeContext)
+  const dispatch = useDispatch()
+  const shoes = useSelector(selectShoes)
+  const error = useSelector(state => state.shoes.error)
+  const loading = useSelector(state => state.shoes.loading)
 
   useEffect(() => {
-    fetch('/shoes')
-      .then(res => res.json())
-      .then(shoe => setShoes(shoe))
-      .catch(error => setError(error))
-  }, [setError, setShoes])
+    dispatch(fetchShoes())
+  }, [dispatch])
 
-  if (error) {
-    return <div>Error: {error.message}</div>
+  if (loading) {
+    return <div>Loading...</div>
   }
 
-  const startingShoes = shoes.map((shoe) => {
+  if (error) {
+    return <div>Error: {error}</div>
+  }
+
+  const shoeCards = shoes.map((shoe) => {
     return <ShoeCard key={shoe.id} shoe={shoe} />
   })
 
@@ -24,7 +29,7 @@ const Shoes = () => {
     <div className='form-container'>
       <h1 className='header'>Shoe Box</h1>
       <div className='shoe-container'>
-        {startingShoes}
+        {shoeCards}
       </div>
     </div>
   )
