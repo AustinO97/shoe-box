@@ -21,15 +21,13 @@ const Shoes = () => {
     return <div>Error: {error}</div>
   }
 
-  const shoeCards = shoes.map((shoe) => {
-    return <ShoeCard key={shoe.id} shoe={shoe} />
-  })
-
   return (
     <div className='form-container'>
       <h1 className='header'>Shoe Box</h1>
       <div className='shoe-container'>
-        {shoeCards}
+        {shoes.map((shoe) => (
+          <ShoeCard key={shoe.id} shoe={shoe} />
+        ))}
       </div>
     </div>
   )
