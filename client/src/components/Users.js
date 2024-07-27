@@ -1,55 +1,46 @@
-import React, { useEffect, useContext } from 'react';
+// src/components/Users.js
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { fetchUsers, addUser, selectUsers } from '../redux/userSlice';
 import UserCard from './UserCard';
-import { UserContext } from './UserContext';
 
 const Users = () => {
-  const { users, setUsers, error, setError } = useContext(UserContext)
-
+  const dispatch = useDispatch()
+  const users = useSelector(selectUsers)
+  const userStatus = useSelector(state => state.users.status)
+  const error = useSelector(state => state.users.error)
 
   useEffect(() => {
-    fetch('/users')
-      .then(res => res.json())
-      .then(user => setUsers(user))
-      .catch(error => setError(error))
-  
-  }, [setError, setUsers])
-  
+    if (userStatus === 'idle') {
+      dispatch(fetchUsers())
+    }
+  }, [userStatus, dispatch])
 
   const validationSchema = yup.object({
-    username: yup.string().required('Username is required')
+    username: yup.string().required('Username is required'),
   })
 
   const formik = useFormik({
     initialValues: {
-      username: ''
+      username: '',
     },
     validationSchema: validationSchema,
     onSubmit: (values, { resetForm }) => {
-      fetch('/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(values)
+      dispatch(addUser(values)).then(() => {
+        resetForm()
       })
-      .then(res => res.json())
-      .then(newUser => {
-          setUsers([...users, newUser])
-          resetForm()
-        })
-        .catch(error => setError(error))
-    }
+    },
   })
 
-  if (error) {
-    return <div>Error: {error.message}</div>
+  if (userStatus === 'loading') {
+    return <div>Loading...</div>
   }
 
-  const userCards = users.map((user) => {
-    return <UserCard key={user.id} user={user} />
-  })
+  if (userStatus === 'failed') {
+    return <div>Error: {error}</div>
+  }
 
   return (
     <div className='form-container'>
@@ -57,23 +48,25 @@ const Users = () => {
       <form id='shoe-form' onSubmit={formik.handleSubmit}>
         <h3>Add New User</h3>
         <div>
-        <label htmlFor='username'>Username</label>
-        <input 
-        id='username'
-        name='username'
-        type='text'
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-        value={formik.values.username}
-        />
-        {formik.touched.username && formik.errors.username ? (
-          <div>{formik.errors.username}</div>
-        ) : null}
+          <label htmlFor='username'>Username</label>
+          <input
+            id='username'
+            name='username'
+            type='text'
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.username}
+          />
+          {formik.touched.username && formik.errors.username ? (
+            <div>{formik.errors.username}</div>
+          ) : null}
         </div>
         <button type='submit'>Add User</button>
       </form>
       <div>
-        {userCards}
+        {users.map((user) => (
+          <UserCard key={user.id} user={user} />
+        ))}
       </div>
     </div>
   )
