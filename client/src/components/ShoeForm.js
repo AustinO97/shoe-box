@@ -1,22 +1,19 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
-import { ShoeContext } from './ShoeContext';
-import { CategoryContext } from './CategoryContext';
-
+import { fetchCategories, selectCategories } from '../redux/categorySlice';
+import { addShoe } from '../redux/shoeSlice';
 
 const ShoeForm = () => {
-  const { shoes, setShoes, setError } = useContext(ShoeContext)
-  const { categories, setCategories } = useContext(CategoryContext)
+  const dispatch = useDispatch()
   const history = useHistory()
+  const categories = useSelector(selectCategories)
 
   useEffect(() => {
-    fetch('/categories')
-    .then(res => res.json())
-    .then(category => setCategories(category))
-    .catch(error => setError(error))
-  }, [setError, setShoes, setCategories])
+    dispatch(fetchCategories())
+  }, [dispatch])
 
   const validationSchema = yup.object({
     brand: yup.string().required('Brand is required'),
@@ -34,25 +31,20 @@ const ShoeForm = () => {
     },
     validationSchema: validationSchema,
     onSubmit: (values, { resetForm }) => {
-      fetch('/shoes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          brand: values.brand,
-          model: values.model,
-          category_id: values.category,
-          image_url: values.image_url,
-        }),
-      })
-      .then(res => res.json())
-      .then(newShoe => { 
-        setShoes([...shoes, newShoe])
-        resetForm()
-        history.push('/')
-      })
-      .catch(error => setError(error))
+      dispatch(addShoe({
+        brand: values.brand,
+        model: values.model,
+        category_id: values.category,
+        image_url: values.image_url
+      }))
+        .unwrap()
+        .then(() => {
+          resetForm()
+          history.push('/')
+        })
+        .catch((error) => {
+          console.error('Failed to add the shoe: ', error)
+        })
     }
   })
 
@@ -60,8 +52,8 @@ const ShoeForm = () => {
     <div className='form-container'>
       <h1 className='header'>Shoe Box</h1>
       <form id='shoe-form' onSubmit={formik.handleSubmit} className='shoe-form'>
-      <h3>Add New Shoe</h3>
-      <div>
+        <h3>Add New Shoe</h3>
+        <div>
           <label htmlFor='brand'>Brand</label>
           <input
             id='brand'
@@ -99,7 +91,7 @@ const ShoeForm = () => {
             value={formik.values.category}
           >
             <option value='' label='Select category' />
-            {categories.map(category => (
+            {Array.isArray(categories) && categories.map(category => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
