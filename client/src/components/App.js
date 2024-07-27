@@ -8,11 +8,6 @@ import ShoeForm from './ShoeForm';
 import About from './About';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faUsers, faStar, faPlus, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { ShoeProvider } from './ShoeContext';
-import { CategoryProvider } from './CategoryContext';
-import { ReviewProvider } from './ReviewContext';
-import { UserProvider } from './UserContext';
-
 
 const App = () => {
   return (
@@ -25,11 +20,6 @@ const App = () => {
           <NavLink to="/add-shoe" activeClassName="active"><FontAwesomeIcon icon={faPlus} /> New Shoe</NavLink>
           <NavLink to="/about" activeClassName="active"><FontAwesomeIcon icon={faInfoCircle} /> About</NavLink>
         </nav>
-
-      <ShoeProvider>
-        <CategoryProvider>
-          <ReviewProvider>
-            <UserProvider>
               <Switch>
                 <Route path="/" exact component={Shoes} />
                 <Route path="/shoes/:id" component={ShoeDetail} />
@@ -38,10 +28,6 @@ const App = () => {
                 <Route path="/add-shoe" component={ShoeForm} />
                 <Route path="/about" component={About} />
               </Switch>
-            </UserProvider>
-          </ReviewProvider>
-        </CategoryProvider>
-      </ShoeProvider>
       </div>
     </Router>
   );

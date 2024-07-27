@@ -4,11 +4,8 @@
 from dotenv import load_dotenv
 load_dotenv()
 
-# Remote library imports
-from flask_restful import Resource
-
 # Local imports
-from config import app, db, api
+from config import app, api
 # Add your model imports
 from resources.routes import *
 from models import *

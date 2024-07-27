@@ -1,16 +1,16 @@
-import React, { createContext, useState} from "react";
+// import React, { createContext, useState} from "react";
 
-const ReviewContext = createContext()
+// const ReviewContext = createContext()
 
-const ReviewProvider = ({ children }) => {
-  const [reviews, setReviews] = useState([])
-  const [error, setError] = useState(null)
+// const ReviewProvider = ({ children }) => {
+//   const [reviews, setReviews] = useState([])
+//   const [error, setError] = useState(null)
 
-  return (
-    <ReviewContext.Provider value={{reviews, setReviews, error, setError}}>
-        {children}
-    </ReviewContext.Provider>
-  )
-}
+//   return (
+//     <ReviewContext.Provider value={{reviews, setReviews, error, setError}}>
+//         {children}
+//     </ReviewContext.Provider>
+//   )
+// }
 
-export { ReviewContext, ReviewProvider }
+// export { ReviewContext, ReviewProvider }
