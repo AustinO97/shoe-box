@@ -1,98 +1,74 @@
-// src/components/ShoeDetail.js
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { CategoryContext } from './CategoryContext';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { updateShoe, deleteShoe, fetchShoes, selectShoes } from '../redux/shoeSlice';
+import { fetchCategories, selectCategories } from '../redux/categorySlice';
 
 const ShoeDetail = () => {
   const { id } = useParams()
+  const dispatch = useDispatch()
   const history = useHistory()
-  const [shoe, setShoe] = useState(null)
+  const shoes = useSelector(selectShoes)
+  const categories = useSelector(selectCategories)
   const [isEditing, setIsEditing] = useState(false)
-  const { categories, setCategories, error, setError } = useContext(CategoryContext)
 
   useEffect(() => {
-    fetch(`/shoes/${id}`)
-      .then(res => res.json())
-      .then((shoe) => {
-        setShoe(shoe)
-        formik.setValues({
-          brand: shoe.brand,
-          model: shoe.model,
-          category: shoe.category ? shoe.category.id : '',
-          image_url: shoe.image_url,
-        })
-      })
-      .catch(error => setError(error))
-  }, [])
+    dispatch(fetchShoes())
+    dispatch(fetchCategories())
+  }, [dispatch])
+
+  const shoe = shoes.find((shoe) => shoe.id === parseInt(id))
 
   const validationSchema = yup.object({
     brand: yup.string().required('Brand is required'),
     model: yup.string().required('Model is required'),
     category: yup.string().required('Category is required'),
-    image_url: yup.string().required('Image URL is required').url('Must be a valid URL'),
+    image_url: yup
+      .string()
+      .required('Image URL is required')
+      .url('Must be a valid URL'),
   })
 
   const formik = useFormik({
     initialValues: {
-      brand: '',
-      model: '',
-      category: '',
-      image_url: '',
+      brand: shoe?.brand || '',
+      model: shoe?.model || '',
+      category: shoe?.category_id || '',
+      image_url: shoe?.image_url || '',
     },
+    enableReinitialize: true,
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      fetch(`/shoes/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      dispatch(
+        updateShoe({
+          id: shoe.id,
           brand: values.brand,
           model: values.model,
           category_id: values.category,
           image_url: values.image_url,
-        }),
-      })
-      .then(res => res.json())
-        .then((updatedShoe) => {
-          setShoe(updatedShoe)
-          setIsEditing(false)
         })
-        .catch(error => {
-          setError(error)
+      )
+        .unwrap()
+        .then(() => {
+          history.push('/')
         })
-    }
+        .catch((error) => {
+          console.error('Failed to update the shoe: ', error)
+        })
+    },
   })
 
   const handleDelete = () => {
-    fetch(`/shoes/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    })
-    .then(() => {
-       history.push('/')
+    dispatch(deleteShoe(shoe.id))
+      .unwrap()
+      .then(() => {
+        history.push('/')
       })
-      .catch(error => {
-        setError(error)
+      .catch((error) => {
+        console.error('Failed to delete the shoe: ', error)
       })
-  }
-
-  const handleEditToggle = () => {
-    setIsEditing(true)
-  }
-
-  const handleCancelEdit = () => {
-    setIsEditing(false)
-    formik.resetForm()
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>
   }
 
   if (!shoe) {
@@ -106,7 +82,7 @@ const ShoeDetail = () => {
           <h2>Edit Shoe</h2>
           <form id='shoe-form' onSubmit={formik.handleSubmit}>
             <div>
-              <label htmlFor="brand">Brand</label>
+              <label htmlFor='brand'>Brand</label>
               <input
                 id='brand'
                 name='brand'
@@ -143,7 +119,7 @@ const ShoeDetail = () => {
                 value={formik.values.category}
               >
                 <option value='' label='Select category' />
-                {categories.map(category => (
+                {categories.map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.name}
                   </option>
@@ -168,8 +144,9 @@ const ShoeDetail = () => {
               ) : null}
             </div>
             <button type='submit'>Save Changes</button>
-            <br />
-            <button type='button' onClick={handleCancelEdit}>Cancel</button>
+            <button type='button' onClick={() => setIsEditing(false)}>
+              Cancel
+            </button>
           </form>
         </div>
       ) : (
@@ -178,9 +155,12 @@ const ShoeDetail = () => {
           <p>{shoe.brand}</p>
           <p>{shoe.category ? shoe.category.name : 'No category'}</p>
           <img src={shoe.image_url} alt={shoe.model} />
-          <button className='delete-button' onClick={handleDelete}>Remove Shoe</button>
-          <br />
-          <button className='edit-button' onClick={handleEditToggle}>Edit Shoe</button>
+          <button className='delete-button' onClick={handleDelete}>
+            Remove Shoe
+          </button>
+          <button className='edit-button' onClick={() => setIsEditing(true)}>
+            Edit Shoe
+          </button>
         </div>
       )}
     </div>
