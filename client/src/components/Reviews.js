@@ -1,22 +1,23 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { fetchReviews, addReview, selectReviews } from '../redux/reviewSlice';
+import { fetchUsers, selectUsers } from '../redux/userSlice';
+import { fetchShoes, selectShoes } from '../redux/shoeSlice';
 import ReviewCard from './ReviewCard';
-import { ReviewContext } from './ReviewContext';
-import { ShoeContext } from './ShoeContext';
-import { UserContext } from './UserContext';
 
 const Reviews = () => {
-  const { reviews, setReviews, error, setError } = useContext(ReviewContext)
-  const { shoes } = useContext(ShoeContext)
-  const { users } = useContext(UserContext)
+  const dispatch = useDispatch()
+  const reviews = useSelector(selectReviews)
+  const users = useSelector(selectUsers)
+  const shoes = useSelector(selectShoes)
 
   useEffect(() => {
-    fetch('/reviews')
-      .then(res => res.json())
-      .then(review => setReviews(review))
-      .catch(error => setError(error))
-  }, [setReviews, setError])
+    dispatch(fetchReviews())
+    dispatch(fetchUsers())
+    dispatch(fetchShoes())
+  }, [dispatch])
 
   const validationSchema = yup.object({
     content: yup.string().required('Content is required'),
@@ -34,28 +35,15 @@ const Reviews = () => {
     },
     validationSchema: validationSchema,
     onSubmit: (values, { resetForm }) => {
-      fetch('/reviews', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(values),
-      })
-      .then(res => res.json())
-      .then((newReview) => {
-          setReviews([...reviews, newReview])
+      dispatch(addReview(values))
+        .unwrap()
+        .then(() => {
           resetForm()
         })
-        .catch(error => setError(error))
+        .catch((error) => {
+          console.error('Failed to add review: ', error)
+        })
     }
-  })
-
-  if (error) {
-    return <div>Error: {error.message}</div>
-  }
-
-  const reviewCards = reviews.map((review) => {
-    return <ReviewCard key={review.id} review={review} />
   })
 
   return (
@@ -134,7 +122,9 @@ const Reviews = () => {
         <button type='submit'>Add Review</button>
       </form>
       <div className='review-container'>
-        {reviewCards}
+        {reviews.map((review) => (
+          <ReviewCard key={review.id} review={review} />
+        ))}
       </div>
     </div>
   )
