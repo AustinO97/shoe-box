@@ -9,34 +9,6 @@ User Management: Users can create accounts, view profiles, and manage their revi
 Shoe Management: Add new shoes, edit existing ones, delete shoes, and categorize them based on type.
 Review System: Users can write and view reviews for each shoe.
 Categorization: Shoes can be categorized into different types like road running or trail running shoes.
-Directory Structure
-The directory structure of the project is as follows:
-.
-├── client
-│   ├── build
-│   ├── node_modules
-│   ├── public
-│   ├── src
-│   │   ├── components
-│   │   ├── redux
-│   │   ├── index.css
-│   │   └── index.js
-├── server
-│   ├── migrations
-│   ├── resources
-│   │   ├── categories.py
-│   │   ├── reviews.py
-│   │   ├── routes.py
-│   │   ├── shoes.py
-│   │   ├── users.py
-│   ├── app.py
-│   ├── config.py
-│   ├── models.py
-│   └── seed.py
-├── Pipfile
-├── Pipfile.lock
-├── Procfile.dev
-├── README.md
 
 Usage
 Upon launching the application, users are greeted with a homepage displaying the available shoes. Users can navigate through different pages using the navbar to view shoes, add new shoes, manage users, or read and write reviews.
